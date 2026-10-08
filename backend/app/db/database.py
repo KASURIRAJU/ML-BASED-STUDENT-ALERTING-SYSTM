@@ -58,11 +58,9 @@ def initialize_database() -> bool:
         return False
 
     try:
-        # Importing registers every model with Base.metadata. create_all is additive.
-        import app.models  # noqa: F401
-
-        Base.metadata.create_all(bind=engine)
-        logger.info("Database tables are ready")
+        # Database tables are now managed by Alembic migrations.
+        # Ensure 'uv run alembic upgrade head' is executed instead of create_all().
+        logger.info("Database connection verified. Alembic migrations should be run to ensure tables exist.")
         return True
     except SQLAlchemyError:
         logger.exception("Could not initialize database tables")

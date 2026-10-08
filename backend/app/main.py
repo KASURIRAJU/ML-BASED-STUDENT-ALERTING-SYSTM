@@ -14,6 +14,7 @@ from app.routes.admin import router as admin_router
 from app.routes.student import router as student_dashboard_router
 from app.routes.faculty import router as faculty_dashboard_router
 from app.routes.students import router as students_router
+from app.routes.alerts import router as alerts_router
 from app.services import ml_service
 
 
@@ -62,18 +63,27 @@ async def lifespan(application: FastAPI):
         close_database()
 
 
+from slowapi import _rate_limit_exceeded_handler
+from slowapi.errors import RateLimitExceeded
+from app.core.rate_limit import limiter
+
 app = FastAPI(
     title="Student Alerting System API",
     description="Student and academic APIs with JWT authentication, role-based access, and frozen-model inference.",
     version="0.1.0",
     lifespan=lifespan,
 )
+
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+
 app.include_router(health_router)
 app.include_router(auth_router)
 app.include_router(admin_router)
 app.include_router(students_router)
 app.include_router(student_dashboard_router)
 app.include_router(faculty_dashboard_router)
+app.include_router(alerts_router)
 
 
 @app.get("/api/ml/model-status", tags=["Machine learning"])

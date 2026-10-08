@@ -2,7 +2,7 @@
 
 from datetime import timedelta
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Request
 from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
@@ -13,12 +13,14 @@ from app.core.security import DUMMY_PASSWORD_HASH, create_access_token, hash_pas
 from app.db.database import get_db
 from app.models import User, UserRole
 from app.schemas.auth import CurrentUserRead, LoginRequest, RegisterRequest, TokenResponse
+from app.core.rate_limit import limiter
 
 router = APIRouter(prefix="/api/auth", tags=["Authentication"])
 
 
 @router.post("/register", response_model=CurrentUserRead, status_code=status.HTTP_201_CREATED)
-def register(payload: RegisterRequest, db: Session = Depends(get_db)) -> User:
+@limiter.limit("5/minute")
+def register(request: Request, payload: RegisterRequest, db: Session = Depends(get_db)) -> User:
     email = str(payload.email).strip().lower()
     user = User(email=email, password_hash=hash_password(payload.password), role=UserRole.STUDENT)
     db.add(user)
@@ -32,7 +34,8 @@ def register(payload: RegisterRequest, db: Session = Depends(get_db)) -> User:
 
 
 @router.post("/login", response_model=TokenResponse)
-def login(payload: LoginRequest, db: Session = Depends(get_db)) -> TokenResponse:
+@limiter.limit("10/minute")
+def login(request: Request, payload: LoginRequest, db: Session = Depends(get_db)) -> TokenResponse:
     email = str(payload.email).strip().lower()
     user = db.scalar(select(User).where(User.email == email))
     hashed = user.password_hash if user is not None else DUMMY_PASSWORD_HASH

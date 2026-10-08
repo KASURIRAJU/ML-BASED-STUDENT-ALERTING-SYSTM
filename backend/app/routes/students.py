@@ -1,6 +1,6 @@
 """Student and academic record endpoints for the database foundation."""
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, BackgroundTasks
 from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
@@ -17,10 +17,12 @@ router = APIRouter(prefix="/api/students", tags=["Students"])
 
 @router.get("", response_model=list[StudentRead])
 def list_students(
+    skip: int = 0,
+    limit: int = 50,
     db: Session = Depends(get_db),
     _user: User = Depends(require_faculty_or_admin),
 ) -> list[Student]:
-    return list(db.scalars(select(Student).order_by(Student.id)).all())
+    return list(db.scalars(select(Student).order_by(Student.id).offset(skip).limit(limit)).all())
 
 
 @router.post("", response_model=StudentRead, status_code=status.HTTP_201_CREATED)
@@ -85,7 +87,8 @@ def list_academic_records(
 def create_academic_record(
     student_id: int,
     payload: AcademicRecordCreate,
+    background_tasks: BackgroundTasks,
     db: Session = Depends(get_db),
     _user: User = Depends(require_faculty_or_admin),
 ) -> AcademicRecord:
-    return academic_record_service.create_for_student(db, student_id, payload.model_dump())
+    return academic_record_service.create_for_student(db, student_id, payload.model_dump(), background_tasks)

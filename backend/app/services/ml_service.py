@@ -111,8 +111,7 @@ def predict_risk(features: dict[str, Any]) -> dict[str, Any]:
     score = float(probabilities[at_risk_index])
     threshold = float(_metadata["decision_threshold"])
     prediction = int(score >= threshold)
-    # These LOW/MEDIUM/HIGH bands match the prototype notebook. The score is
-    # uncalibrated, so it is an internal model score rather than failure odds.
+    
     level = "HIGH" if score >= 0.70 else "MEDIUM" if score >= 0.35 else "LOW"
     return {
         "risk_prediction": prediction,
@@ -121,7 +120,6 @@ def predict_risk(features: dict[str, Any]) -> dict[str, Any]:
         "risk_score": score,
         "decision_threshold": threshold,
     }
-
 
 def log_prediction_failure() -> None:
     """Log inference details for developers while keeping responses concise."""

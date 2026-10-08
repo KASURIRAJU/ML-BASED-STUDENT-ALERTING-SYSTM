@@ -2,7 +2,7 @@
 
 import logging
 
-from fastapi import HTTPException
+from fastapi import HTTPException, BackgroundTasks
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
@@ -21,7 +21,7 @@ def list_for_student(db: Session, student_id: int) -> list[AcademicRecord]:
     return list(db.scalars(query).all())
 
 
-def create_for_student(db: Session, student_id: int, values: dict) -> AcademicRecord:
+def create_for_student(db: Session, student_id: int, values: dict, background_tasks: BackgroundTasks) -> AcademicRecord:
     if db.get(Student, student_id) is None:
         raise HTTPException(status_code=404, detail="Student was not found.")
 
@@ -33,7 +33,7 @@ def create_for_student(db: Session, student_id: int, values: dict) -> AcademicRe
     # A successful record submission is an explicit assessment event. The source
     # record is durable even if model inference is temporarily unavailable.
     try:
-        risk_service.get_or_create_current_prediction(db, student_id, create=True)
+        risk_service.get_or_create_current_prediction(db, student_id, create=True, background_tasks=background_tasks)
         db.commit()
     except Exception:
         db.rollback()

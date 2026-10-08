@@ -1,14 +1,19 @@
 # Student Alerting System
 
-## How it works currently
+## How it works (Active Workflow)
 1. Faculty creates an `AcademicRecord` for a student.
-2. The `risk_service` extracts the features.
-3. The `ml_service` generates a risk score (0.0 to 1.0).
-4. If the score is >= 0.40, `risk_prediction` is 1 (At Risk).
-5. The prediction is saved in the `ml_predictions` table.
+2. The `risk_service` extracts the features and synchronously evaluates the ML pipeline.
+3. If the score is >= 0.40, the system triggers the `alert_service`.
+4. The `alert_service` checks if the student already has an `OPEN` alert. If not, it creates a new `Alert` record in the database.
+5. The `alert_service` dispatches a `BackgroundTask` (non-blocking) to notify faculty via email/SMS (currently simulated).
 
-## Crucial Gaps
-This is a **risk prediction** system, not an **alerting** system. 
-* No emails, SMS, or webhooks are fired when a student becomes "At Risk".
-* Faculty must manually check the `/api/faculty/students-at-risk` endpoint to see updates.
-* There is no workflow for acknowledging, resolving, or dismissing a false positive alert.
+## Alert Lifecycle
+Alerts have explicit state management:
+* **OPEN:** A new risk prediction was generated. Faculty action required.
+* **ACKNOWLEDGED:** Faculty has seen the alert and is investigating.
+* **RESOLVED:** Faculty has intervened and closed the alert.
+* **FALSE_POSITIVE:** Faculty dismissed the alert as incorrect.
+
+## API Endpoints
+* `GET /api/alerts?status_filter=OPEN` - List alerts.
+* `PATCH /api/alerts/{id}/status` - Update an alert's state.

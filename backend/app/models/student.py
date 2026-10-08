@@ -30,3 +30,6 @@ class Student(Base):
     predictions: Mapped[list["MLPrediction"]] = relationship(
         back_populates="student", cascade="all, delete-orphan"
     )
+    alerts: Mapped[list["Alert"]] = relationship(
+        back_populates="student", cascade="all, delete-orphan"
+    )

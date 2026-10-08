@@ -1,13 +1,13 @@
 """Risk service for managing ML prediction history and integration."""
 
 import logging
-from fastapi import HTTPException
+from fastapi import HTTPException, BackgroundTasks
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.models import AcademicRecord, MLPrediction, Student
 from app.schemas.student import RiskAssessmentRead
-from app.services import ml_service
+from app.services import ml_service, alert_service
 
 logger = logging.getLogger(__name__)
 
@@ -31,7 +31,7 @@ def get_latest_prediction(db: Session, student_id: int) -> MLPrediction | None:
     return db.scalars(query).first()
 
 
-def get_or_create_current_prediction(db: Session, student_id: int, create: bool = False) -> MLPrediction | None:
+def get_or_create_current_prediction(db: Session, student_id: int, create: bool = False, background_tasks: BackgroundTasks | None = None) -> MLPrediction | None:
     latest_record = latest_academic_record(db, student_id)
     if not latest_record:
         return None
@@ -81,6 +81,22 @@ def get_or_create_current_prediction(db: Session, student_id: int, create: bool 
     )
 
     db.add(prediction)
+    db.flush() # flush to get prediction.id
+    
+    # Alerting logic
+    alert = alert_service.process_prediction_for_alerts(db, prediction)
+    
+    if alert and background_tasks:
+        student = db.get(Student, student_id)
+        if student:
+            full_name = f"{student.first_name} {student.last_name}"
+            background_tasks.add_task(
+                alert_service.notify_faculty_background, 
+                alert.id, 
+                full_name, 
+                alert.severity
+            )
+
     return prediction
 
 def to_risk_response(prediction: MLPrediction | None, record: AcademicRecord | None) -> RiskAssessmentRead | None:

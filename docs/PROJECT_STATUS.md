@@ -3,25 +3,24 @@
 **Date:** 2026-10-08
 
 ## Current Development Stage
-Prototype / Integration Phase
+Implementation & Hardening Phase
 
 ## Overall Completion
-45%
+60%
 
 ## Confidence
-95% (Verified via code inspection and test execution)
+95% (Verified via code inspection and full test execution)
 
 ## Status Breakdown
-* **Backend:** 85% - API foundation is robust, typed, and tested.
-* **ML:** 90% - Model is trained, tuned, calibrated, and frozen securely.
-* **Alerting System:** 10% - Risk scores are saved, but active notifications are entirely missing.
-* **Database:** 90% - PostgreSQL schema and relationships are correct. Missing Alembic migrations.
-* **Testing:** 60% - 9 integration tests pass, but edge cases are untested.
-* **Security:** 70% - RBAC and JWT are solid. `.env` secret management is poor.
-* **Deployment:** 10% - Highly coupled to the local virtual environment. No Dockerfile or `pyproject.toml`.
+* **Backend:** 85% - API foundation is robust.
+* **ML:** 90% - Model is trained and integrated. (Pinned to scikit-learn 1.6.1 for consistency).
+* **Alerting System:** 75% - Alerts are now active entities with lifecycle states (OPEN, RESOLVED) and background dispatch tasks.
+* **Database:** 90% - `alerts` table added. Still missing Alembic migrations.
+* **Testing:** 70% - 10 integration tests pass covering the full alert lifecycle.
+* **Security:** 75% - `.env.example` created.
+* **Deployment:** 30% - Environment detached from local root via `pyproject.toml` and `uv`.
 * **Frontend:** 0% - Missing.
 
 ## Next Milestone
-* Clean up the virtual environment from the project root.
-* Establish `pyproject.toml` for dependency management.
-* Initialize Git repository.
+* Setup Alembic migrations.
+* Add model explainability (SHAP).
