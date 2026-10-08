@@ -1,0 +1,24 @@
+Feature,Importance
+num__What was your previous SGPA?,0.8076396628302641
+num__How many Credit did you have completed?,0.07874959739811987
+num__Current Semester,0.04994486127826637
+num__attendance_numeric,0.02427692408263591
+num__How many hour do you spent daily in social media?,0.01154564890192026
+num__How many times do you seat for study in a day?,0.008811197213554499
+cat__Status of your English language proficiency_Basic,0.006785031952290198
+num__How many hour do you spent daily on your skill development?,0.004356069750171691
+num__How many hour do you study daily?,0.003672553532877361
+cat__Status of your English language proficiency_Advance,0.0012569876015866208
+cat__What is your preferable learning mode?_Online,0.0010449679455014037
+cat__Do you have personal Computer?_No,0.0004670318915679678
+cat__Do you use smart phone?_Yes,0.0004215546805999319
+cat__Do you use smart phone?_No,0.00033067976830957526
+cat__Status of your English language proficiency_Intermediate,0.00027841401046673343
+cat__Do you have personal Computer?_Yes,0.0002763223865477492
+cat__Do you attend in teacher consultancy for any kind of academical problems?_Yes,9.372574266793759e-05
+cat__Do you attend in teacher consultancy for any kind of academical problems?_No,4.876903265184443e-05
+cat__Do you have meritorious scholarship ?_No,0.0
+cat__Do you have meritorious scholarship ?_Yes,0.0
+cat__What is your preferable learning mode?_Offline,0.0
+cat__Are you engaged with any co-curriculum activities?_No,0.0
+cat__Are you engaged with any co-curriculum activities?_Yes,0.0

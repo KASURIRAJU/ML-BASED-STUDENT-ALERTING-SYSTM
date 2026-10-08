@@ -1,0 +1,22 @@
+# Local Python runtimes and virtual environments
+.uv-cache/
+.uv-python/
+backend/.venv/
+.venv/
+.env
+backend/.env
+
+# Python bytecode
+__pycache__/
+*.py[cod]
+
+# Local logs and database files
+*.log
+*.tmp
+*.temp
+.pytest_cache/
+
+# Local-only database data (the trained .joblib artifact remains tracked)
+*.db
+*.sqlite3
+backend/.postgres-data/

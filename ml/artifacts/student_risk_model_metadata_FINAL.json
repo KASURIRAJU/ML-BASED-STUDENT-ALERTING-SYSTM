@@ -1,0 +1,30 @@
+{
+    "model_name": "Student Academic Risk Model",
+    "model_type": "GradientBoostingClassifier",
+    "target": "academic_risk",
+    "target_definition": {
+        "0": "Not At Risk",
+        "1": "At Risk"
+    },
+    "cgpa_threshold_for_target": 3.0,
+    "decision_threshold": 0.4,
+    "features": [
+        "What was your previous SGPA?",
+        "attendance_numeric",
+        "Current Semester",
+        "How many Credit did you have completed?",
+        "How many hour do you study daily?",
+        "How many times do you seat for study in a day?",
+        "How many hour do you spent daily in social media?",
+        "How many hour do you spent daily on your skill development?",
+        "Do you attend in teacher consultancy for any kind of academical problems?",
+        "Do you have meritorious scholarship ?",
+        "What is your preferable learning mode?",
+        "Status of your English language proficiency",
+        "Do you have personal Computer?",
+        "Do you use smart phone?",
+        "Are you engaged with any co-curriculum activities?"
+    ],
+    "model_version": "1.0.0",
+    "created_at": "2026-10-07T16:38:25.628827"
+}
